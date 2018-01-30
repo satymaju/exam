@@ -1,0 +1,167 @@
+Administrator Part
+./
+Create repository 
+
+svnadmin create --fs-type fsfs /home/demo_project_repository
+svn ls file:///home/demo_project_repository
+chmod 777 -R /home/demo_project_repository
+
+
+User Part :
+
+1) Setting up initial project 
+   Login with local user name
+   Create directory structure 
+   Importing the Initial Project to Repository
+
+
+Login with local user name: Connect to putty , login using local user
+
+Create directory structure:
+
+cd /home/svnuser
+
+mkdir Analysis
+mkdir Coding
+mkdir Design
+mkdir Testing
+mkdir Timesheet
+mkdir Query_Tracking_Sheet
+cd Analysis
+touch ReadMe.txt
+touch Software_Requirement_Specification.docx
+cd ..
+cd Design
+touch High_Level_Design_1.2.docx
+touch Low_Level_Design_1.2.docx
+cd ..
+Testing
+touch test_case-lv1.0.xls
+cd ..
+
+tree
+
+.
+|-- Analysis
+|   |-- ReadMe.txt
+|   `-- Software_Requirement_Specification.docx
+|-- Coding
+|-- Design
+|   |-- High_Level_Design_1.2.docx
+|   `-- Low_Level_Design_1.2.docx
+|-- Query_Tracking_Sheet
+|-- Testing
+|   `-- test_case-lv1.0.xls
+`-- Timesheet
+
+
+Importing the Initial Project to Repository : 
+
+svn import /home/testuser1/project file:///home/demo_project_repository -m 'Initial import'
+
+Adding         /home/svnuser/Query_Tracking_Sheet
+Adding         /home/svnuser/Coding
+Adding         /home/svnuser/Analysis
+Adding         /home/svnuser/Analysis/Software_Requirement_Specification.docx
+Adding         /home/svnuser/Analysis/ReadMe.txt
+Adding         /home/svnuser/Timesheet
+Adding         /home/svnuser/Design
+Adding         /home/svnuser/Design/High_Level_Design_1.2.docx
+Adding         /home/svnuser/Design/Low_Level_Design_1.2.docx
+Adding         /home/svnuser/Testing
+Adding         /home/svnuser/Testing/test_case-lv1.0.xls
+
+
+
+2) Checking out the project :
+
+Login using testuser1
+mkdir demo_project
+rm -rf demo_project
+svn checkout file:///home/demo_project_repository
+
+
+A    demo_project_repository/Query_Tracking_Sheet
+A    demo_project_repository/Analysis
+A    demo_project_repository/Analysis/Software_Requirement_Specification.docx
+A    demo_project_repository/Analysis/ReadMe.txt
+A    demo_project_repository/Coding
+A    demo_project_repository/Timesheet
+A    demo_project_repository/Design
+A    demo_project_repository/Design/High_Level_Design_1.2.docx
+A    demo_project_repository/Design/Low_Level_Design_1.2.docx
+A    demo_project_repository/Testing
+A    demo_project_repository/Testing/test_case-lv1.0.xls
+
+
+
+
+cd demo_project_repository
+ls -a
+
+svn info
+
+Path: .
+URL: file:///home/demo_project_repository
+Repository Root: file:///home/demo_project_repository
+Repository UUID: 0d791d92-36f4-4563-8484-16eff9c87be7
+Revision: 3
+Node Kind: directory
+Schedule: normal
+Last Changed Author: root
+Last Changed Rev: 3
+Last Changed Date: 2013-09-25 09:41:05 +0530 (Wed, 25 Sep 2013)
+
+
+
+3) Working on the Project, Changing and editing contents of it 
+
+go to demo_project_repository
+
+
+cd Analysis
+touch SignOff.doc
+touch Open_Item.doc
+vi ReadMe.txt
+cd ..
+svn status
+?       Analysis/SignOff.doc
+?       Analysis/Open_Item.doc
+M       Analysis/ReadMe.txt
+svn add Analysis/SignOff.doc Analysis/Open_Item.doc
+
+svn commit -m 'User Confirmation Document Added'
+
+
+
+4) Best way to perfrom changes 
+
+user1: 
+
+svn lock Analysis/ReadMe.txt -m "Locking a File for Change"
+
+
+user 2: 
+
+[testuser2@pace Analysis]$ vi ReadMe.txt
+[testuser2@pace Analysis]$ svn commit -m 'User Confirmation Document Added'
+Sending        Analysis/ReadMe.txt
+Transmitting file data .svn: Commit failed (details follow):
+svn: User testuser2 does not own lock on path '/Analysis/ReadMe.txt' (currently locked by testuser1)
+[testuser2@pace Analysis]$
+
+
+
+Testuser1
+svn unlock Analysis/ReadMe.txt
+'ReadMe.txt' unlocked.
+
+
+Testuser2
+
+[testuser2@pace Analysis]$ svn commit -m 'User Confirmation Document Added'
+Sending        Analysis/ReadMe.txt
+Transmitting file data .
+Committed revision 5.
+
+
